@@ -25,7 +25,7 @@ and result with fractions.
 EXAMPLE
 -------
 
-```
+```c++
 //Result will be stored here
 fraction f;
 
