@@ -16,9 +16,9 @@ int main() {
         fraction f;
         block->solve(&f);
         if(f.south == 1)
-            printf("\n------------------\nResult %lld", f.north);
+            printf("\n------------------\nResult %lld\n", f.north);
         else
-            printf("\n------------------\nResult %lld/%lld", f.north, f.south);
+            printf("\n------------------\nResult %lld/%lld\n", f.north, f.south);
     }
 
     /**
