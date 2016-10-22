@@ -9,7 +9,7 @@ l_frac_block *_parse(char **pt){
     number_buf buf;
     buf.clear();
     OP bufOP = ' ';
-    while(**pt != '\0'){
+    while(**pt != '\0' && **pt != '\n' && **pt != '\r'){
         if(**pt >= '0' && **pt <= '9') {
             buf.push((int64_t) (**pt - '0'));
         }else{
@@ -18,7 +18,7 @@ l_frac_block *_parse(char **pt){
                     if(buf.modified()){
                         block->append(fraction(buf.val()), bufOP);
                         buf.clear();
-                        bufOP = ' ';
+                        bufOP = (OP) **pt;
                     } else if(**pt == OP_SUBTRACT)
                         buf.negative();
                 }else{
@@ -53,6 +53,11 @@ l_frac_block *_parse(char **pt){
             }
         }
         ++*pt;
+    }
+    if(VALID_OP(bufOP)){
+        if(buf.modified()){
+            block->append(fraction(buf.val()), bufOP);
+        }
     }
     return block;
 }
@@ -141,7 +146,6 @@ struct _fraction _fraction::operator/(struct _fraction a) {
 
 void _l_frac_block::solve(fraction *result) {
     l_frac_monomial *current = first;
-    printf("+ Pass %lld/%lld\n", result->north, result->south);
     while (current){
         if(current->node.is_block){
             fraction *sub_buf_res = new fraction();
@@ -151,8 +155,15 @@ void _l_frac_block::solve(fraction *result) {
             m.m_operator = current->m_operator;
             m.right = *sub_buf_res;
             r_frac2_monomial(m, result);
-            printf("Solving step (%lld/%lld)%c(%lld/%lld)=(%lld/%lld)\n", m.left.north, m.left.south,
-                   m.m_operator, m.right.north, m.right.south, sub_buf_res->north, sub_buf_res->south);
+#if M_DEBUG_ENABLE
+            M_DEBUG("Solving step ");
+            M_DEBUG_FRAC(m.left);
+            M_DEBUG("%c", m.m_operator);
+            M_DEBUG_FRAC(m.right);
+            M_DEBUG("=");
+            M_DEBUG_FRAC(*sub_buf_res);
+            M_ENDL();
+#endif
         } else{
             if(current == first){
                 *result = current->node.content.frac;
@@ -164,8 +175,15 @@ void _l_frac_block::solve(fraction *result) {
             m.m_operator = current->m_operator;
             m.right = current->node.content.frac;
             r_frac2_monomial(m, result);
-            printf("- Solving step (%lld/%lld)%c(%lld/%lld)=(%lld/%lld)\n", m.left.north, m.left.south,
-                   m.m_operator, m.right.north, m.right.south, result->north, result->south);
+#if M_DEBUG_ENABLE
+            M_DEBUG("- Solving step ");
+            M_DEBUG_FRAC(m.left);
+            M_DEBUG("%c", m.m_operator);
+            M_DEBUG_FRAC(m.right);
+            M_DEBUG("=");
+            M_DEBUG_FRAC((*result));
+            M_ENDL();
+#endif
         }
         current = current->next;
     }
@@ -261,8 +279,10 @@ void _debug_trace(l_frac_block *block){
     }
 }
 
+#if M_DEBUG_ENABLE
 void _trace_block(l_frac_block *block){
     printf("Trace Block: ");
     _debug_trace(block);
     printf(" Finish trace\n");
 }
+#endif

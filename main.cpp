@@ -12,7 +12,11 @@ int main() {
     printf("Please input a line of expression to evaluate:\n");
     if(fgets(str, 2048, stdin) != NULL){
         l_frac_block *block = parse(str);
+
+#if M_DEBUG_ENABLE //Trace input code
         _trace_block(block);
+#endif
+
         fraction f;
         block->solve(&f);
         if(f.south == 1)

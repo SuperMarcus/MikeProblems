@@ -9,11 +9,13 @@
 
 typedef uint8_t OP;
 
-#define OP_DIVIDE      '/'
-#define OP_SUBTRACT    '-'
-#define OP_ADD         '+'
-#define OP_MULTIPLY    '*'
-#define VALID_OP(a)    (a == OP_DIVIDE || a == OP_SUBTRACT || a == OP_ADD || a == OP_MULTIPLY)
+#define OP_DIVIDE        '/'
+#define OP_SUBTRACT      '-'
+#define OP_ADD           '+'
+#define OP_MULTIPLY      '*'
+#define VALID_OP(a)      (a == OP_DIVIDE || a == OP_SUBTRACT || a == OP_ADD || a == OP_MULTIPLY)
+
+#define M_DEBUG_ENABLE    1
 
 typedef struct _fraction fraction;
 typedef struct _l_frac_monomial l_frac_monomial;
@@ -81,5 +83,11 @@ public:
     l_frac_block *append(l_frac_monomial *m);
     l_frac_block *append(l_frac_block *b, OP o);
 };
+
+#if M_DEBUG_ENABLE
+#define M_DEBUG          printf
+#define M_DEBUG_FRAC(f)  M_DEBUG((f).south == 1 ? "%lld" : "(%lld/%lld)", (f).north, (f).south)
+#define M_ENDL()         M_DEBUG("\n")
+#endif
 
 #endif //MIKEPROBLEMS_TYPES_H

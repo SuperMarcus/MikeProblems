@@ -25,6 +25,8 @@ int64_t gcd(int64_t a, int64_t b);
 int64_t lcm(int64_t a, int64_t b);
 l_frac_block *parse(const char *string_expression);
 void r_frac2_monomial(frac2_monomial m, fraction *result);
+#if M_DEBUG_ENABLE
 void _trace_block(l_frac_block *block);
+#endif
 
 #endif //MIKEPROBLEMS_EXPRESSIONCALCULATOR_H
